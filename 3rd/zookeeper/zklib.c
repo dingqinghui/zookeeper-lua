@@ -20,7 +20,7 @@
 #define ASYNTR_SET      4
 #define ASYNTR_DELETE   5
 #define ASYNTR_GETCHILD   6
-
+#define ASYNTR_GET 7
 
 
 #define TO_ZKCLIENT(L,index) \
@@ -36,12 +36,34 @@ assert(zkcli);
 
 
 static int CALLBACK_INDEX = LUA_NOREF ;
+static int err_fun_stack_index = 0;
+
+int pcall_callback_err_fun(lua_State* L)
+{
+    lua_Debug debug= {};
+    int ret = lua_getstack(L, 2, &debug); // 0是pcall_callback_err_fun自己, 1是error函数, 2是真正出错的函数
+    lua_getinfo(L, "Sln", &debug);
+
+
+    const char* err = lua_tostring(L, -1);
+    lua_pop(L, 1);
+
+    printf("%s:line %d err:%s\n",debug.short_src,debug.currentline,err);
+
+    //if (debug.name != 0) {
+    //msg << "(" << debug.namewhat << " " << debug.name << ")";
+    return 0;
+}
+
+
 
 
 static int __pushcb(lua_State *L){
     if(CALLBACK_INDEX == LUA_NOREF){
          return -1;
     }
+    lua_pushcfunction(L, pcall_callback_err_fun);
+    err_fun_stack_index = lua_gettop(L);
     lua_rawgeti(L, LUA_REGISTRYINDEX, CALLBACK_INDEX);
     assert( lua_isfunction(L,STACK_TOP_INDEX) );
     return 0;
@@ -49,7 +71,10 @@ static int __pushcb(lua_State *L){
 
 
 static int __callcb(lua_State *L,int args){
-    lua_pcall(L,args,0,0);
+    int code = lua_pcall(L,args,0,err_fun_stack_index);
+    if ( code != LUA_OK){
+       
+    }
 }
 
 static void __connectedHandler(zkclient* cli,int isReconnect){
@@ -142,11 +167,10 @@ static  void __getNodeRTHandler(zkclient *cli, int errCode, const char *path, co
 
     lua_pushlightuserdata(L,cli);
     lua_pushinteger(L,ZK_EVENT_ASYNRT);
-    lua_pushinteger(L,ASYNTR_CREATE);
+    lua_pushinteger(L,ASYNTR_GET);
 
     lua_pushstring(L,path);
-     lua_pushinteger(L,errCode);
-
+    lua_pushinteger(L,errCode);
     lua_pushstring(L,buff);
     lua_pushinteger(L,bufflen);
    
@@ -458,8 +482,8 @@ static const luaL_Reg zookeeperlib[] = {
     {"stop",zookeeper_stop},
     {"destory",zookeeper_destory},
     {"callback",zookeeper_callback},
-    {"addauth",zookeeper_addauth},
 
+    {"addauth",zookeeper_addauth},
     {"createnode",zookeeper_createnode},
     {"rcreatenode",zookeeper_recursive_createnode},
     {"setnode",zookeeper_setnode},

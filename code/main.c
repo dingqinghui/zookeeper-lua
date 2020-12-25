@@ -6,14 +6,14 @@
 #include   <stdio.h>
 
 
-
-
 int main(void)
 {
-   
+
+
   lua_State *L  = luaL_newstate();
   luaL_openlibs(L);
-  int retCode = luaL_dofile(L,"../script/main.lua");
+
+  int retCode = luaL_dofile(L,"./script/main.lua");
   if (retCode != 0)
   {
       printf("error %s\n",lua_tostring(L,-1));

@@ -350,7 +350,7 @@ void zkclientFree(zkclient* cli){
 //建立会话
 int zkclientConnect(zkclient* cli){
     assert(cli);
-    zkclient* zh = zookeeper_init(cli->host, onSessionEventWacherFn, cli->timeout, &(cli->myid), cli, 0);
+    zkclient* zh = zookeeper_init(cli->host, onSessionEventWacherFn, cli->timeout, 0, cli, 0);
     if (!zh) {
         return ZK_FAIL;
     }
