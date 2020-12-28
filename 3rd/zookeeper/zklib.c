@@ -79,6 +79,7 @@ static int __callcb(lua_State *L,int args){
 
 static void __connectedHandler(zkclient* cli,int isReconnect){
     lua_State *L = zkclientGetUserData(cli);
+
      __pushcb(L) ;
 
     lua_pushlightuserdata(L,cli);
@@ -232,23 +233,25 @@ static  void __nodeEventHandler(zkclient *cli, int eventType, const char *path, 
 
 
 static int zookeeper_callback (lua_State *L) {
+    
     CALLBACK_INDEX = luaL_ref(L,LUA_REGISTRYINDEX);
+   
     return 0;
 }
 
-
+//Lua主线程调用
 static int zookeeper_create (lua_State *L) {
-    assert( lua_isstring(L,STACK_BOTTOM_INDEX) );
-    const char* host = lua_tostring(L,STACK_BOTTOM_INDEX);
+    assert( lua_isstring(L,1) );
+    const char* host = lua_tostring(L,1);
 
     int timeout = lua_tointeger(L,2);
-    
-    int funci = luaL_ref(L,LUA_REGISTRYINDEX);
 
     zkclient* zkcli  = zkclientCreate(host,__connectedHandler,__closeHandler,timeout);
     assert(zkcli);
+
     //保存一份lua_State
     zkclientSetUserData(zkcli,L);
+
     lua_pushlightuserdata(L,zkcli);
     return 1;
 }

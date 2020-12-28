@@ -14,7 +14,7 @@ local self = coroutines
 
 function coroutines.fork(func,...)
     local co = coroutine_create(func)
-    coroutine_resume(co,...)
+    print("coroutine_resume", coroutine_resume(co,...) )
     return co
 end 
 
@@ -24,11 +24,16 @@ function coroutines.running()
 end
 
 function coroutines.supend(co)
+    print( "supend isyieldable",coroutine.isyieldable(),co  )
     return  coroutine_yield(co)
 end
 
 function coroutines.wakeup(co,...)
+    print("coroutine_resume",co)
     return coroutine_resume(co,...)
 end
+
+
+
 
 return coroutines

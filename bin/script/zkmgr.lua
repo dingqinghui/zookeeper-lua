@@ -21,8 +21,31 @@ local ZKEVENT = {
     WACHER_EVENT = 4,
 }
 
+-- 异步调用类型
+local ASYNC_TYPE = {
+    ASYNTR_EXIST    = 1,
+    ASYNTR_AUTH     = 2,
+    ASYNTR_CREATE   = 3,
+    ASYNTR_SET      = 4,
+    ASYNTR_DELETE   = 5,
+    ASYNTR_GETCHILD = 6,
+    ASYNTR_GET      = 7,
+}
+
+-- 异步调用结果错误码
+local ASYNC_ERROR_CODE  = {
+    ZKRT_ERROR       = -1 ,
+    ZKRT_SUCCESS     = 0 ,
+    ZKRT_NONODE      = 1 ,   --节点/父节点不存在
+    ZKRT_NODEEXIST   = 2 ,   --节点存在
+    ZKRT_AUTHFAIL    = 3 ,   --添加用户失败
+}
+
+
 
 local zkevent = {}
+
+
 zkevent[ZKEVENT.CONNECT_EVENT] = function (zkcli,isReconnect)
     local client = zkmgr.getclient(zkcli)
     if not client then 
@@ -31,27 +54,53 @@ zkevent[ZKEVENT.CONNECT_EVENT] = function (zkcli,isReconnect)
     client:wakeupconnect(isReconnect)
 end
 
+
+
 zkevent[ZKEVENT.CLOSE_EVENT] = function (zkcli,isExpire)
 
 end
 
 
+local on_async_retdeal = {
+    [ASYNC_TYPE.ASYNTR_GET] = function (path,errcode,buff,bufflen)
+        if errcode == ASYNC_ERROR_CODE.ZKRT_SUCCESS then 
+            return buff,bufflen
+        else
+            return nil,0
+        end
+    end,
+    [ASYNC_TYPE.ASYNTR_GETCHILD] = function (path,errcode,childlist)
+        if errcode == ASYNC_ERROR_CODE.ZKRT_SUCCESS then 
+            return childlist
+        end
+        return nil
+    end
+}
 
 
 zkevent[ZKEVENT.ASYNRT_EVENT] = function (zkcli,asynType,...)
+    
     local client = zkmgr.getclient(zkcli)
     if not client then 
         return 
     end 
-    if asynType == 7 then 
-        
+    local retList = {... }
+
+    local path = retList[1]
+    local errcode = retList[2]
+
+    local ret = nil
+    if on_async_retdeal[asynType]  then
+        ret = on_async_retdeal[asynType](...)
+    else
+        ret = errcode == ASYNC_ERROR_CODE.ZKRT_SUCCESS
     end
-    client:asynswakeup(...)
+
+    client:asynswakeup(ret)
 end
 
 
 local function zk_callback(zkcli,event,...)
-    print(...)
     local func = zkevent[event]
     if func then 
         func(zkcli,...)
@@ -60,17 +109,15 @@ end
 
 
 function zkmgr.init()  
-    -- 设定回调 所有zkclient共用
     zookeeper.callback(zk_callback)
 end
 
 function zkmgr.newclient(host,timeout,onconnect)
-
     local client = zkclient.new(host,timeout)
+
     if not client or client:getid() == nil then
         return 
     end 
-
     local id = client:getid()
     self.__clients[id] = client
     self.__clientCnt = self.__clientCnt + 1

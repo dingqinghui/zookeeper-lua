@@ -34,7 +34,9 @@ function zkclient:dctor()
 end 
 
 function zkclient:load(host,timeout)
-    self.__zkcli = zookeeper.new(host,timeout)
+    if not self.__zkcli then 
+        self.__zkcli = zookeeper.new(host,timeout) -- 
+    end
 end 
 
 -- 阻塞连接

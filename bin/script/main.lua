@@ -9,15 +9,16 @@ local zookeeper = require("zookeeper")
 local client = nil
 
 
+
 --zkmgr.init() 
 
 local function onConnect(isReconnenct)
 
     print("--------------onConnect--------------------",isReconnenct,coroutines.running())
 
-    print( client:createnode("/setnode","ss",3,false,false,"") )
-    print( client:setnode("/setnode","ss2",4) )
-    print( client:getnode("/setnode") )
+    print( "createnode",client:createnode("/setnode","ss",3,false,false,"") )
+    print( "setnode",client:setnode("/setnode","ss2",4) )
+    print( "getnode", client:getnode("/setnode") )
 end
 
 
@@ -28,7 +29,6 @@ client = zkmgr.newclient("192.168.93.130:2183,192.168.93.130:2184,192.168.93.130
 
 
 while true do
-    print( "main co",coroutines.running())
     zkmgr.run()
 end
 

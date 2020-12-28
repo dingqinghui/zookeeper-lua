@@ -42,10 +42,10 @@ EQUALS = =
 CMAKE_EDIT_COMMAND = /usr/bin/ccmake
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/hgfs/linux_share/zookeeper-lua
+CMAKE_SOURCE_DIR = /mnt/share/git/zookeeper-lua
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/hgfs/linux_share/zookeeper-lua
+CMAKE_BINARY_DIR = /mnt/share/git/zookeeper-lua
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -72,14 +72,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/linux_share/zookeeper-lua/CMakeFiles /mnt/hgfs/linux_share/zookeeper-lua/3rd/zookeeper/CMakeFiles/progress.marks
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 3rd/zookeeper/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/linux_share/zookeeper-lua/CMakeFiles 0
+	cd /mnt/share/git/zookeeper-lua && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/share/git/zookeeper-lua/CMakeFiles /mnt/share/git/zookeeper-lua/3rd/zookeeper/CMakeFiles/progress.marks
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 3rd/zookeeper/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/share/git/zookeeper-lua/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 3rd/zookeeper/clean
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 3rd/zookeeper/clean
 .PHONY : clean
 
 # The main clean target
@@ -88,22 +88,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 3rd/zookeeper/preinstall
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 3rd/zookeeper/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 3rd/zookeeper/preinstall
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 3rd/zookeeper/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /mnt/share/git/zookeeper-lua && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 3rd/zookeeper/CMakeFiles/zookeeper.dir/rule:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 3rd/zookeeper/CMakeFiles/zookeeper.dir/rule
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 3rd/zookeeper/CMakeFiles/zookeeper.dir/rule
 .PHONY : 3rd/zookeeper/CMakeFiles/zookeeper.dir/rule
 
 # Convenience name for target.
@@ -112,7 +112,7 @@ zookeeper: 3rd/zookeeper/CMakeFiles/zookeeper.dir/rule
 
 # fast build rule for target.
 zookeeper/fast:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/build
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/build
 .PHONY : zookeeper/fast
 
 client.o: client.c.o
@@ -120,7 +120,7 @@ client.o: client.c.o
 
 # target to build an object file
 client.c.o:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/client.c.o
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/client.c.o
 .PHONY : client.c.o
 
 client.i: client.c.i
@@ -128,7 +128,7 @@ client.i: client.c.i
 
 # target to preprocess a source file
 client.c.i:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/client.c.i
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/client.c.i
 .PHONY : client.c.i
 
 client.s: client.c.s
@@ -136,7 +136,7 @@ client.s: client.c.s
 
 # target to generate assembly for a file
 client.c.s:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/client.c.s
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/client.c.s
 .PHONY : client.c.s
 
 zkcli.o: zkcli.c.o
@@ -144,7 +144,7 @@ zkcli.o: zkcli.c.o
 
 # target to build an object file
 zkcli.c.o:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/zkcli.c.o
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/zkcli.c.o
 .PHONY : zkcli.c.o
 
 zkcli.i: zkcli.c.i
@@ -152,7 +152,7 @@ zkcli.i: zkcli.c.i
 
 # target to preprocess a source file
 zkcli.c.i:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/zkcli.c.i
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/zkcli.c.i
 .PHONY : zkcli.c.i
 
 zkcli.s: zkcli.c.s
@@ -160,7 +160,7 @@ zkcli.s: zkcli.c.s
 
 # target to generate assembly for a file
 zkcli.c.s:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/zkcli.c.s
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/zkcli.c.s
 .PHONY : zkcli.c.s
 
 zklib.o: zklib.c.o
@@ -168,7 +168,7 @@ zklib.o: zklib.c.o
 
 # target to build an object file
 zklib.c.o:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/zklib.c.o
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/zklib.c.o
 .PHONY : zklib.c.o
 
 zklib.i: zklib.c.i
@@ -176,7 +176,7 @@ zklib.i: zklib.c.i
 
 # target to preprocess a source file
 zklib.c.i:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/zklib.c.i
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/zklib.c.i
 .PHONY : zklib.c.i
 
 zklib.s: zklib.c.s
@@ -184,7 +184,7 @@ zklib.s: zklib.c.s
 
 # target to generate assembly for a file
 zklib.c.s:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/zklib.c.s
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f 3rd/zookeeper/CMakeFiles/zookeeper.dir/build.make 3rd/zookeeper/CMakeFiles/zookeeper.dir/zklib.c.s
 .PHONY : zklib.c.s
 
 # Help Target
@@ -216,6 +216,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /mnt/share/git/zookeeper-lua && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

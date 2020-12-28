@@ -42,10 +42,10 @@ EQUALS = =
 CMAKE_EDIT_COMMAND = /usr/bin/ccmake
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/hgfs/linux_share/zookeeper-lua
+CMAKE_SOURCE_DIR = /mnt/share/git/zookeeper-lua
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/hgfs/linux_share/zookeeper-lua
+CMAKE_BINARY_DIR = /mnt/share/git/zookeeper-lua
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -72,14 +72,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/linux_share/zookeeper-lua/CMakeFiles /mnt/hgfs/linux_share/zookeeper-lua/code/CMakeFiles/progress.marks
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 code/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/linux_share/zookeeper-lua/CMakeFiles 0
+	cd /mnt/share/git/zookeeper-lua && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/share/git/zookeeper-lua/CMakeFiles /mnt/share/git/zookeeper-lua/code/CMakeFiles/progress.marks
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 code/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/share/git/zookeeper-lua/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 code/clean
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 code/clean
 .PHONY : clean
 
 # The main clean target
@@ -88,22 +88,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 code/preinstall
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 code/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 code/preinstall
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 code/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /mnt/share/git/zookeeper-lua && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 code/CMakeFiles/luaserver.dir/rule:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 code/CMakeFiles/luaserver.dir/rule
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f CMakeFiles/Makefile2 code/CMakeFiles/luaserver.dir/rule
 .PHONY : code/CMakeFiles/luaserver.dir/rule
 
 # Convenience name for target.
@@ -112,7 +112,7 @@ luaserver: code/CMakeFiles/luaserver.dir/rule
 
 # fast build rule for target.
 luaserver/fast:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f code/CMakeFiles/luaserver.dir/build.make code/CMakeFiles/luaserver.dir/build
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f code/CMakeFiles/luaserver.dir/build.make code/CMakeFiles/luaserver.dir/build
 .PHONY : luaserver/fast
 
 main.o: main.c.o
@@ -120,7 +120,7 @@ main.o: main.c.o
 
 # target to build an object file
 main.c.o:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f code/CMakeFiles/luaserver.dir/build.make code/CMakeFiles/luaserver.dir/main.c.o
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f code/CMakeFiles/luaserver.dir/build.make code/CMakeFiles/luaserver.dir/main.c.o
 .PHONY : main.c.o
 
 main.i: main.c.i
@@ -128,7 +128,7 @@ main.i: main.c.i
 
 # target to preprocess a source file
 main.c.i:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f code/CMakeFiles/luaserver.dir/build.make code/CMakeFiles/luaserver.dir/main.c.i
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f code/CMakeFiles/luaserver.dir/build.make code/CMakeFiles/luaserver.dir/main.c.i
 .PHONY : main.c.i
 
 main.s: main.c.s
@@ -136,7 +136,7 @@ main.s: main.c.s
 
 # target to generate assembly for a file
 main.c.s:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(MAKE) -f code/CMakeFiles/luaserver.dir/build.make code/CMakeFiles/luaserver.dir/main.c.s
+	cd /mnt/share/git/zookeeper-lua && $(MAKE) -f code/CMakeFiles/luaserver.dir/build.make code/CMakeFiles/luaserver.dir/main.c.s
 .PHONY : main.c.s
 
 # Help Target
@@ -162,6 +162,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /mnt/hgfs/linux_share/zookeeper-lua && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /mnt/share/git/zookeeper-lua && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

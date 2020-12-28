@@ -42,10 +42,10 @@ EQUALS = =
 CMAKE_EDIT_COMMAND = /usr/bin/ccmake
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/hgfs/linux_share/zookeeper-lua
+CMAKE_SOURCE_DIR = /mnt/share/git/zookeeper-lua
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/hgfs/linux_share/zookeeper-lua
+CMAKE_BINARY_DIR = /mnt/share/git/zookeeper-lua
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -72,9 +72,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/linux_share/zookeeper-lua/CMakeFiles /mnt/hgfs/linux_share/zookeeper-lua/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/share/git/zookeeper-lua/CMakeFiles /mnt/share/git/zookeeper-lua/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/hgfs/linux_share/zookeeper-lua/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/share/git/zookeeper-lua/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
