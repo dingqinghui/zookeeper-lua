@@ -60,6 +60,15 @@ zkevent[ZKEVENT.CLOSE_EVENT] = function (zkcli,isExpire)
 
 end
 
+zkevent[ZKEVENT.WACHER_EVENT] = function (zkcli,watcherType,path)
+    local client = zkmgr.getclient(zkcli)
+    if not client then 
+        return 
+    end 
+    client:wacherHandler(path,watcherType)
+end
+
+
 
 local on_async_retdeal = {
     [ASYNC_TYPE.ASYNTR_GET] = function (path,errcode,buff,bufflen)
@@ -77,26 +86,33 @@ local on_async_retdeal = {
     end
 }
 
-
-zkevent[ZKEVENT.ASYNRT_EVENT] = function (zkcli,asynType,...)
-    
+-- 异步请求结果处理
+zkevent[ZKEVENT.ASYNRT_EVENT] = function (zkcli,asynType,sync,...)
+    print(zkcli,asynType,sync,...)
     local client = zkmgr.getclient(zkcli)
     if not client then 
         return 
     end 
     local retList = {... }
 
+
     local path = retList[1]
     local errcode = retList[2]
-
-    local ret = nil
-    if on_async_retdeal[asynType]  then
-        ret = on_async_retdeal[asynType](...)
+    
+    if sync then 
+        local ret = nil
+        if on_async_retdeal[asynType]  then
+            ret = on_async_retdeal[asynType](...)
+        else
+            ret = errcode == ASYNC_ERROR_CODE.ZKRT_SUCCESS
+        end
+        client:asynswakeup(ret)
     else
-        ret = errcode == ASYNC_ERROR_CODE.ZKRT_SUCCESS
+        local func = client:pop_async_wacher()
+        if func then 
+            func(client,...)
+        end 
     end
-
-    client:asynswakeup(ret)
 end
 
 
@@ -121,11 +137,12 @@ function zkmgr.newclient(host,timeout,onconnect)
     local id = client:getid()
     self.__clients[id] = client
     self.__clientCnt = self.__clientCnt + 1
-
-    if client:connect(onconnect) then 
-        return client
-    end 
-    return 
+    coroutines.fork(function() 
+        if client:connect(onconnect) then 
+            return client
+        end 
+    end)
+    return client
 end
 
 

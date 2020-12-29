@@ -106,17 +106,19 @@ static void __closeHandler(zkclient* cli,int isExpire){
 
 
 static void __existRTHandler(zkclient* cli, int errCode,const char* path,const struct Stat *stat,const void *data){
+    int sync = context;
     lua_State *L = zkclientGetUserData(cli);
     __pushcb(L);
 
     lua_pushlightuserdata(L,cli);
     lua_pushinteger(L,ZK_EVENT_ASYNRT);
     lua_pushinteger(L,ASYNTR_EXIST);
-
+    
+    lua_pushboolean(L,sync);
     lua_pushstring(L,path);
     lua_pushinteger(L,errCode);
 
-    __callcb(L,5);
+    __callcb(L,6);
 }
 
 
@@ -163,6 +165,8 @@ static  void __setNodeRTHandler(zkclient* cli,int errCode,const char* path,const
 
 }
 static  void __getNodeRTHandler(zkclient *cli, int errCode, const char *path, const char *buff, int bufflen, const struct Stat *stat, void *context){
+    int sync = context;
+
     lua_State *L = zkclientGetUserData(cli);
     __pushcb(L);
 
@@ -170,13 +174,14 @@ static  void __getNodeRTHandler(zkclient *cli, int errCode, const char *path, co
     lua_pushinteger(L,ZK_EVENT_ASYNRT);
     lua_pushinteger(L,ASYNTR_GET);
 
+    lua_pushboolean(L,sync);
     lua_pushstring(L,path);
     lua_pushinteger(L,errCode);
+    
     lua_pushstring(L,buff);
     lua_pushinteger(L,bufflen);
-   
 
-    __callcb(L,7);
+    __callcb(L,8);
 }
 static  void __deleteNodeRTHandler(zkclient *cli, int errCode, const char *path, void *context){
      lua_State *L = zkclientGetUserData(cli);
@@ -193,6 +198,7 @@ static  void __deleteNodeRTHandler(zkclient *cli, int errCode, const char *path,
 }
 
 static  void __getChildrenNodeRTHandler(zkclient *cli, int errCode, const char *path, const struct String_vector *strings, void *context){
+    int sync = context;
     lua_State *L = zkclientGetUserData(cli);
     __pushcb(L);
 
@@ -200,6 +206,7 @@ static  void __getChildrenNodeRTHandler(zkclient *cli, int errCode, const char *
     lua_pushinteger(L,ZK_EVENT_ASYNRT);
     lua_pushinteger(L,ASYNTR_GETCHILD);
 
+    lua_pushboolean(L,sync);
     lua_pushstring(L,path);
     lua_pushinteger(L,errCode);
 
@@ -211,10 +218,10 @@ static  void __getChildrenNodeRTHandler(zkclient *cli, int errCode, const char *
             lua_pushstring(L,  strings->data[i]); //再将value压入栈
             lua_settable(L, -3);//settable将操作-2，-1编号的键值对，设置到table中，并把key-value从栈中移除
         }
-         __callcb(L,6);
+         __callcb(L,7);
     }
     else{
-         __callcb(L,5);
+         __callcb(L,6);
     }
 }
 
@@ -227,7 +234,7 @@ static  void __nodeEventHandler(zkclient *cli, int eventType, const char *path, 
     lua_pushinteger(L,eventType);
 
     lua_pushstring(L,path);
-
+    
     __callcb(L,4);
 }
 
@@ -398,7 +405,10 @@ static int zookeeper_getnode (lua_State *L) {
     assert( lua_isstring(L,index) );
     const char* path = lua_tostring(L,index++); 
 
-    int ret = zkclientGetNode(ZKCLIENT,path,__getNodeRTHandler,0);
+    int sync = lua_toboolean(L,index++);
+
+    int ret = zkclientGetNode(ZKCLIENT,path,__getNodeRTHandler,sync);
+    printf("zookeeper_getnode ret:%d\n",ret);
     lua_pushboolean(L,ret == ZK_OK);
     return 1;
 }
@@ -427,8 +437,9 @@ static int zookeeper_getchilds (lua_State *L) {
 
     assert( lua_isstring(L,index) );
     const char* path = lua_tostring(L,index++); 
+    int sync = lua_toboolean(L,index++);
 
-    int ret = zkclientGetChildrens(ZKCLIENT,path,__getChildrenNodeRTHandler,0);
+    int ret = zkclientGetChildrens(ZKCLIENT,path,__getChildrenNodeRTHandler,sync);
     lua_pushboolean(L,ret == ZK_OK);
     return 1;
 }
@@ -440,8 +451,8 @@ static int zookeeper_existnode (lua_State *L) {
 
     assert( lua_isstring(L,index) );
     const char* path = lua_tostring(L,index++); 
-
-    int ret = zkclientExistNode(ZKCLIENT, path,__existRTHandler,0);
+     int sync = lua_toboolean(L,index++);
+    int ret = zkclientExistNode(ZKCLIENT, path,__existRTHandler,0,sync);
     lua_pushboolean(L,ret == ZK_OK);
     return 1;
 }
