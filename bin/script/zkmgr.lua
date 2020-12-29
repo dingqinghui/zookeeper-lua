@@ -87,18 +87,14 @@ local on_async_retdeal = {
 }
 
 -- 异步请求结果处理
-zkevent[ZKEVENT.ASYNRT_EVENT] = function (zkcli,asynType,sync,...)
-    print(zkcli,asynType,sync,...)
+zkevent[ZKEVENT.ASYNRT_EVENT] = function (zkcli,asynType,sync,path,errcode,...)
+
     local client = zkmgr.getclient(zkcli)
     if not client then 
         return 
     end 
-    local retList = {... }
 
-
-    local path = retList[1]
-    local errcode = retList[2]
-    
+    print("path:",path,"sync:",sync,"errcode:",errcode)
     if sync then 
         local ret = nil
         if on_async_retdeal[asynType]  then
@@ -111,6 +107,8 @@ zkevent[ZKEVENT.ASYNRT_EVENT] = function (zkcli,asynType,sync,...)
         local func = client:pop_async_wacher()
         if func then 
             func(client,...)
+        else
+            print("async not callback")
         end 
     end
 end
@@ -119,6 +117,7 @@ end
 local function zk_callback(zkcli,event,...)
     local func = zkevent[event]
     if func then 
+        print(...)
         func(zkcli,...)
     end
 end

@@ -106,7 +106,7 @@ static void __closeHandler(zkclient* cli,int isExpire){
 
 
 static void __existRTHandler(zkclient* cli, int errCode,const char* path,const struct Stat *stat,const void *data){
-    int sync = context;
+    int sync = data;
     lua_State *L = zkclientGetUserData(cli);
     __pushcb(L);
 
@@ -452,7 +452,7 @@ static int zookeeper_existnode (lua_State *L) {
     assert( lua_isstring(L,index) );
     const char* path = lua_tostring(L,index++); 
      int sync = lua_toboolean(L,index++);
-    int ret = zkclientExistNode(ZKCLIENT, path,__existRTHandler,0,sync);
+    int ret = zkclientExistNode(ZKCLIENT, path,__existRTHandler,sync);
     lua_pushboolean(L,ret == ZK_OK);
     return 1;
 }

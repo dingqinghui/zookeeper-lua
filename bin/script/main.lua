@@ -6,6 +6,9 @@ local zkclient = require("script.zkclient")
 local zkmgr = require("script.zkmgr")
 local zookeeper = require("zookeeper")
 
+
+
+
 local client = nil
 
 function getnodeHandler(...)
@@ -28,11 +31,11 @@ local function onConnect(isReconnenct)
     
     --print( "getnode", client:agetnode("/setnode",getnodeHandler) )
 
-    client:subscribe("/setnode",wacherHandler)
+    client:subscribeNode("/setnode",wacherHandler)
 
     client:setnode("/setnode","ss9",4)
 
-
+    client:setnode("/setnode","ss1",4)
 end
 
 

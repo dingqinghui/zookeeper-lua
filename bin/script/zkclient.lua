@@ -2,6 +2,7 @@
 
 local zookeeper = require("zookeeper")
 local coroutines = require("script.coroutines")
+local WACHER_EVENT_TYPE = require("script.zkwevent") 
 
 
 local zkclient = {}
@@ -68,7 +69,9 @@ function zkclient:stop()
 end
 
 function zkclient:run()
-    zookeeper.run(self.__zkcli)
+    if self.__zkcli then 
+        print( zookeeper.run(self.__zkcli) )
+    end 
 end
 
 
@@ -194,61 +197,76 @@ end
 function zkclient:aexistnode(path,watcher)
     local  ret = zookeeper.existnode(self.__zkcli,path,false)
     if not ret then 
+        print("call aexistnode fail")
         return nil
     end 
 
     self:push_async_wacher(watcher)
     return true
 end
-local WACHER_EVENT_TYPE = {
-     EventWacherFail            = -1,
-     EventNodeCreated           = 0 ,
-     EventNodeDeleted           = 1 ,
-     EventNodeDataChanged       = 2 ,
-     EventNodeChildrenChanged   = 3 ,
-}
+
+local function onWacherType2String(watcherType)
+    if watcherType == WACHER_EVENT_TYPE.EventNodeCreated then 
+        return "EventNodeCreated"
+    elseif watcherType == WACHER_EVENT_TYPE.EventNodeDeleted then
+        return "EventNodeDeleted"
+    elseif watcherType == WACHER_EVENT_TYPE.EventNodeDataChanged then
+        return "EventNodeDataChanged"
+    elseif watcherType == WACHER_EVENT_TYPE.EventNodeChildrenChanged then
+        return "EventNodeChildrenChanged"
+    else
+        return "EventWacherFail"
+    end 
+end 
 
 function zkclient:wacherHandler(path,watcherType)
+    print("-----------",onWacherType2String(watcherType))
     local func = self:getsubscribewacher(path)
     if not func then 
         return 
     end 
+
     local callback = function (...)
+        print("get wacher node state",...)
         func(watcherType,...)
     end 
-    if watcherType == WACHER_EVENT_TYPE.EventNodeCreated or
-     watcherType == WACHER_EVENT_TYPE.EventNodeDeleted then
-        -- 获取最新状态防止 两次注册之间事件丢失
-        if not self:aexistnode(path,callback) then  
-            goto err
-        end 
-        -- 重复注册
-        if not self:onSubscribeNode(path,func)  then 
-            goto err
-        end 
-  
-    elseif watcherType == WACHER_EVENT_TYPE.EventNodeDataChanged then
-        if not self:agetnode(path,callback) then  
-            goto err
-        end 
-        if not self:onSubscribeNode(path,func)  then 
-            goto err
-        end 
-    elseif watcherType == WACHER_EVENT_TYPE.EventNodeChildrenChanged then
-        if not self:agetchilds(path,callback) then  
-            goto err
-        end 
-        if not self:onSubscribeChildNode(path,func)  then 
-            goto err
-        end 
-    else
-        goto err
+    while true do 
+        if watcherType == WACHER_EVENT_TYPE.EventNodeCreated or
+        watcherType == WACHER_EVENT_TYPE.EventNodeDeleted then
+            
+            -- 获取最新状态防止 两次注册之间事件丢失
+            if not self:aexistnode(path,callback) then  
+                break
+            end 
+            -- 重复注册
+            if not self:subscribeNode(path,func)  then 
+                break
+            end 
+            return 
+        elseif watcherType == WACHER_EVENT_TYPE.EventNodeDataChanged then
+            if not self:agetnode(path,callback) then  
+                break
+            end 
+            if not self:subscribeNode(path,func)  then 
+                break
+            end 
+            return
+        elseif watcherType == WACHER_EVENT_TYPE.EventNodeChildrenChanged then
+            if not self:agetchilds(path,callback) then  
+                break
+            end 
+            if not self:subscribeChildNode(path,func)  then 
+                break
+            end 
+            return
+        else
+            break
+        end
     end
 
-    ::err:: do
-        self:unsubscribe(path)  -- 取消注册
-        func(path,watcherType)  -- 通知逻辑层
-    end 
+    self:unsubscribe(path)  -- 取消注册
+    func(path,watcherType)  -- 通知逻辑层
+
 end
 
 
@@ -270,30 +288,34 @@ function zkclient:subscribe(path,func)
     end 
 
     self.__wacherlist[path] = func
+    return true
 end
 
 
-function zkclient:onSubscribeNode(path,func)
+function zkclient:subscribeNode(path,func)
     local  ret = zookeeper.nodewatcher(self.__zkcli,path)
     if not ret then 
         print("subscribe node watcher fail. path:",path)
         return ret 
     end 
     self.__wacherlist[path] = func
+    return true
 end
-
-function zkclient:onSubscribeChildNode(path,func)
+-- 父节点不存在 会在回调中报错
+function zkclient:subscribeChildNode(path,func)
     local  ret = zookeeper.childwacher(self.__zkcli,path)
     if not ret then 
         print("subscribe node childwacher fail. path:",path)
         return ret 
     end 
     self.__wacherlist[path] = func
+    return true
 end
 
 
 
 function zkclient:unsubscribe(path)
+    print("unsubscribe",debug.traceback())
     if self.__wacherlist[path] then 
         self.__wacherlist[path] = nil
     end
