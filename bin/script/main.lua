@@ -23,19 +23,42 @@ end
 --zkmgr.init() 
 
 local function onConnect(isReconnenct)
+    ---------------------------------------同步API测试-----------------------------------------------
+    print( "######## createnode ret:",client:createnode("/setnode","ss",3,false,false,"") )    
+    -- ######## createnode ret:        true    /setnode
+    print( "######## createnode ret:",client:createnode("/setnode/child","ss11",3,false,false,"") )
+    print( "######## setnode ret:",client:setnode("/setnode","ss2",4) )
+    --######## setnode ret:   true    /setnode
+    local ret,parentpath ,childs = client:getchilds("/setnode")
+    for k,child in pairs(childs) do
+        local childpath = string.format("%s/%s",parentpath,child)
+        print("######## childpath:",childpath)
+        print("########",client:getnode(childpath))
+    end
+    print( "######## getchilds ret:",client:getchilds("/setnode") )
+    --######## getchilds ret: true    /setnode        table: 0x1953690
+    print( "######## existnode ret:",client:existnode("/setnode") )
+    --######## existnode ret: true    /setnode
+    print( "######## getnode ret:",client:getnode("/setnode") )
+    --######## getnode ret:   true    /setnode        ss2     4
+    print( "######## delnode ret:",client:delnode("/setnode/child") )
+    --######## delnode ret:   true    /setnode/child
+    print( "######## delnode ret:",client:delnode("/setnode") )
+    ---------------------------------------同步API测试-----------------------------------------------
 
-    print("--------------onConnect--------------------",isReconnenct,coroutines.running())
 
-    --print( "createnode",client:createnode("/setnode","ss",3,false,false,"") )
+    --print( "createnode", )
     --print( "setnode",client:setnode("/setnode","ss2",4) )
     
     --print( "getnode", client:agetnode("/setnode",getnodeHandler) )
 
-    client:subscribeNode("/setnode",wacherHandler)
+    -- client:subscribeNode("/setnode",wacherHandler)
 
-    client:setnode("/setnode","ss9",4)
+    -- client:setnode("/setnode","ss9",4)
 
-    client:setnode("/setnode","ss1",4)
+    -- client:setnode("/setnode","ss1",4)
+
+
 end
 
 
@@ -50,50 +73,4 @@ while true do
 
 
 end
-
-
-
-
--- local function zk_callback(zkcli,event,...)
---     print("zk_callback",zkcli,event,...)
---     local args = {...}
---     if event == 1 then 
---         -- zookeeper.createnode(zkcli,"/parent1111","1",2,false,false,"")
---         -- zookeeper.rcreatenode(zkcli,"/parent111112/child","1",2,false,false,"")
---         --zookeeper.setnode(zkcli,"/parent111112/child","sa",3)
---         --zookeeper.getnode(zkcli,"/parent111112/child")
---         --zookeeper.getchilds(zkcli,"/parent111112")
---         --zookeeper.existnode(zkcli,"/parent111112")
-
---         -- zookeeper.nodewatcher(zkcli,"/parent111112")
---         -- zookeeper.childwacher(zkcli,"/parent111112")
---         -- zookeeper.setnode(zkcli,"/parent111112","sa11",3)
---         -- zookeeper.createnode(zkcli,"/parent111112/child1","1",2,false,false,"")
-
---     elseif event == 3 then
---         if args[1] == 6 then 
---             for i,v in pairs(args[4]) do
---                 print(v)
---             end
---         end 
---     end
--- end
-
--- zookeeper.callback(zk_callback)
-
-
--- local zkcli = zookeeper.new("127.0.0.1:2183,127.0.0.1:2184,127.0.0.1:2185",5000)
-
-
-
-
--- zookeeper.connect(zkcli)
-
-
-
-
-
--- while true do
---     zookeeper.run(zkcli)
--- end
 
