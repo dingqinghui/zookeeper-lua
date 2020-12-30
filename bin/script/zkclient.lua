@@ -29,6 +29,7 @@ function zkclient:actor(host,timeout)
     self.__nodeWacherList = {}
     self.__childWacherList = {}
     self.__async_cb_list = {}   -- 异步请求回调函数列表
+    self.__ondisconnect = nil
     self:load(host,timeout)
 end
 
@@ -45,7 +46,7 @@ function zkclient:load(host,timeout)
 end 
 
 -- 阻塞连接
-function zkclient:connect(onconnect)
+function zkclient:connect(onconnect,ondisconnect)
     if not self.__zkcli then 
         return 
     end 
@@ -54,7 +55,7 @@ function zkclient:connect(onconnect)
     if not ret then 
         return ret
     end
-
+    self.__ondisconnect = ondisconnect
     -- 挂起等待操作完成
     self.__connect_co = coroutines.running()
     local isReconnenct = coroutines.supend(self.__connect_co)
@@ -62,6 +63,12 @@ function zkclient:connect(onconnect)
 
     return true
 end
+
+function zkclient:disconnect(isexpire)
+    if self.__ondisconnect then 
+        self.__ondisconnect(isexpire)
+    end 
+end 
 
 function zkclient:getid()
     return self.__zkcli

@@ -187,7 +187,11 @@ end
 
 
 zkevent[ZKEVENT.CLOSE_EVENT] = function (zkcli,isExpire)
-
+    local client = zkmgr.getclient(zkcli)
+    if not client then 
+        return 
+    end
+    client:disconnect(isExpire) 
 end
 
 zkevent[ZKEVENT.WACHER_EVENT] = function (zkcli,watcherType,path)
@@ -274,7 +278,7 @@ function zkmgr.init()
     zookeeper.callback(zk_callback)
 end
 
-function zkmgr.newclient(host,timeout,onconnect)
+function zkmgr.newclient(host,timeout,onconnect,ondisconnect)
     local client = zkclient.new(host,timeout)
 
     if not client or client:getid() == nil then
@@ -284,7 +288,7 @@ function zkmgr.newclient(host,timeout,onconnect)
     self.__clients[id] = client
     self.__clientCnt = self.__clientCnt + 1
     coroutines.fork(function() 
-        if client:connect(onconnect) then 
+        if client:connect(onconnect,ondisconnect) then 
             return client
         end 
     end)

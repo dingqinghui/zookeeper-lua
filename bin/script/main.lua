@@ -78,10 +78,14 @@ local function onConnect(isReconnenct)
 
 end
 
+local function onDisconnect(isExpire)
+   
+   
+
+end
 
 
-
-client = zkmgr.newclient("127.0.0.1:2183,127.0.0.1:2184,127.0.0.1:2185",5000,onConnect)
+client = zkmgr.newclient("127.0.0.1:2183,127.0.0.1:2184,127.0.0.1:2185",5000,onConnect,onDisconnect)
 
 
 

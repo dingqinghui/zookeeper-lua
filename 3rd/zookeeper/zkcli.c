@@ -455,6 +455,9 @@ int zkclientIsConnected(zkclient* cli){
 static int onSelect(zkclient* cli){
     assert(cli);
     zhandle_t* zh = cli->zh;
+    if(zh == 0){
+      return ZK_OK;
+    }
     fd_set rfds, wfds, efds;
     FD_ZERO(&rfds); FD_ZERO(&wfds);  FD_ZERO(&efds);
     
