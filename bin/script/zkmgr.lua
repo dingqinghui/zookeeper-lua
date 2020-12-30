@@ -3,8 +3,12 @@ local zookeeper = require("zookeeper")
 local coroutines = require("script.coroutines")
 local zkclient = require("script.zkclient")
 
+local define = require("script.define") 
 
-
+local WACHER_EVENT_TYPE = define.WACHER_EVENT_TYPE
+local ZKEVENT = define.ZKEVENT
+local ASYNC_TYPE = define.ASYNC_TYPE
+local ASYNC_ERROR_CODE = define.ASYNC_ERROR_CODE
 
 local zkmgr = {
     __clients = {},
@@ -13,35 +17,6 @@ local zkmgr = {
 }
 
 local self = zkmgr
-
-local ZKEVENT = {
-    CONNECT_EVENT = 1,
-    CLOSE_EVENT = 2,
-    ASYNRT_EVENT = 3,
-    WACHER_EVENT = 4,
-}
-
--- 异步调用类型
-local ASYNC_TYPE = {
-    ASYNTR_EXIST    = 1,
-    ASYNTR_AUTH     = 2,
-    ASYNTR_CREATE   = 3,
-    ASYNTR_SET      = 4,
-    ASYNTR_DELETE   = 5,
-    ASYNTR_GETCHILD = 6,
-    ASYNTR_GET      = 7,
-}
-
--- 异步调用结果错误码
-local ASYNC_ERROR_CODE  = {
-    ZKRT_ERROR       = -1 ,
-    ZKRT_SUCCESS     = 0 ,
-    ZKRT_NONODE      = 1 ,   --节点/父节点不存在
-    ZKRT_NODEEXIST   = 2 ,   --节点存在
-    ZKRT_AUTHFAIL    = 3 ,   --添加用户失败
-}
-
-
 
 
 local function onZkevent2String(zkevent)
@@ -94,6 +69,109 @@ local function  onErrcode2String(errcode)
     end 
 end 
 
+function zkmgr.wacherType2String(watcherType)
+    if watcherType == WACHER_EVENT_TYPE.EventNodeCreated then 
+        return "EventNodeCreated"
+    elseif watcherType == WACHER_EVENT_TYPE.EventNodeDeleted then
+        return "EventNodeDeleted"
+    elseif watcherType == WACHER_EVENT_TYPE.EventNodeDataChanged then
+        return "EventNodeDataChanged"
+    elseif watcherType == WACHER_EVENT_TYPE.EventNodeChildrenChanged then
+        return "EventNodeChildrenChanged"
+    else
+        return "EventWacherFail"
+    end 
+end 
+
+
+local function onWacherHandler(client,path,watcherType)
+    local watchList = {}
+    if watcherType == WACHER_EVENT_TYPE.EventNodeChildrenChanged then 
+        watchList = client:getChildWacherList()
+    else
+        watchList = client:getNodeWacherList()
+    end 
+    local func = watchList[path]
+    if not func then 
+        return 
+    end 
+
+    local failHandler = function ()
+        client:unsubscribe(watchList,path)  -- 取消注册
+        func(WACHER_EVENT_TYPE.EventWacherFail,path)  -- 通知逻辑层
+    end 
+
+    local existHandler = function (client,errcode,...)
+        print(errcode,...)
+        if ASYNC_ERROR_CODE.ZKRT_SUCCESS == errcode then 
+            func(WACHER_EVENT_TYPE.EventNodeCreated,...)
+        elseif ASYNC_ERROR_CODE.ZKRT_NONODE == errcode then 
+            func(WACHER_EVENT_TYPE.EventNodeDeleted,...)
+        else
+            failHandler()
+        end 
+    end 
+
+    local getHandler = function (client,errcode,...)
+        if ASYNC_ERROR_CODE.ZKRT_SUCCESS == errcode then 
+            func(WACHER_EVENT_TYPE.EventNodeDataChanged,...)
+        elseif ASYNC_ERROR_CODE.ZKRT_NONODE == errcode then 
+            func(WACHER_EVENT_TYPE.EventNodeDeleted,...)
+        else
+            failHandler()
+        end 
+    end 
+
+    local getChildHandler = function (client,errcode,...)
+        if ASYNC_ERROR_CODE.ZKRT_SUCCESS == errcode then 
+            func(WACHER_EVENT_TYPE.EventNodeChildrenChanged,...)
+        elseif ASYNC_ERROR_CODE.ZKRT_NONODE == errcode then 
+            func(WACHER_EVENT_TYPE.EventNodeDeleted,...)
+        else
+            failHandler()
+        end 
+    end 
+
+
+
+    while true do 
+        if watcherType == WACHER_EVENT_TYPE.EventNodeCreated or
+        watcherType == WACHER_EVENT_TYPE.EventNodeDeleted then
+            
+            -- 获取最新状态防止 两次注册之间事件丢失
+            if not client:aexistnode(path,existHandler) then  
+                break
+            end 
+            -- 重复注册
+            if not client:subscribeNode(path,func)  then 
+                break
+            end 
+            return 
+        elseif watcherType == WACHER_EVENT_TYPE.EventNodeDataChanged then
+            if not client:agetnode(path,getHandler) then  
+                break
+            end 
+            if not client:subscribeNode(path,func)  then 
+                break
+            end 
+            return
+        elseif watcherType == WACHER_EVENT_TYPE.EventNodeChildrenChanged then
+            if not client:agetchilds(path,getChildHandler) then  
+                break
+            end 
+            if not client:subscribeChildNode(path,func)  then 
+                break
+            end 
+            return
+        else
+            break
+        end
+    end
+    failHandler()
+end
+
+
+
 
 local zkevent = {}
 
@@ -117,7 +195,7 @@ zkevent[ZKEVENT.WACHER_EVENT] = function (zkcli,watcherType,path)
     if not client then 
         return 
     end 
-    client:wacherHandler(path,watcherType)
+    onWacherHandler(client,path,watcherType)
 end
 
 
@@ -169,12 +247,12 @@ zkevent[ZKEVENT.ASYNRT_EVENT] = function (zkcli,asynType,sync,errcode,...)
         -- 唤醒协程返回同步结果
         client:asynswakeup(ret,...)
     else
-        -- local func = client:pop_async_wacher()
-        -- if func then 
-        --     func(client,...)
-        -- else
-        --     print("async not callback")
-        -- end 
+        local func = client:pop_async_wacher()
+        if func then 
+            func(client,errcode,...)
+        else
+            print("async not callback")
+        end 
     end
 end
 

@@ -246,7 +246,7 @@ static  void __nodeEventHandler(zkclient *cli, int eventType, const char *path, 
 
     lua_pushstring(L,path);
     
-    __callcb(L,5);
+    __callcb(L,4);
 }
 
 
